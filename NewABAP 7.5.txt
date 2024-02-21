@@ -1,0 +1,145 @@
+	1) NO NEED TO DECLARE WORK AREA
+
+DATA lt_tab TYPE TABLE of STRING.
+*DATA lwa_tab type STRING.
+
+data(lwa_tab) = 'Basant Joshi'.
+
+APPEND lwa_tab to lt_tab.
+APPEND lwa_tab to lt_tab.
+APPEND lwa_tab to lt_tab.
+
+
+LOOP at lt_tab into lwa_tab.
+
+  WRITE: / lwa_tab.
+
+ENDLOOP.
+
+write: / 'After New Syntax'.
+"After NEw syntax
+
+
+LOOP at lt_tab INTO data(lw_tab1).
+
+  WRITE: / lw_tab1.
+
+ENDLOOP.
+
+	2) NO NEED TO DECLARE STRUCTURE AND THAN ASSIGN THE INTERNAL TABLE
+
+SELECT MATNR,
+       ERSDA FROM MARA
+       INTO TABLE @data(lt_data)
+       UP TO 10 ROWS.
+
+LOOP AT lt_data into data(lwa_data).
+
+ write: / lwa_data.
+
+ENDLOOP.
+
+
+
+TYPE 2 
+	
+DATA lv_vbeln TYPE vbak-vbeln VALUE '0000000002'.
+
+
+SELECT * from vbak into TABLE @data(lt_data) WHERE vbeln = @lv_vbeln.
+
+CL_DEMO_OUTPUT=>DISPLAY( lt_data ).
+
+
+
+TYPE 3
+
+SELECT
+       VBELN AS Sales_Document,
+    CASE
+      WHEN VBELN = '0000000002' THEN 'SECOND'
+      END AS VALUE,
+  ERDAT AS Created_On,
+  ERZET AS Time,
+  ERNAM AS Created_By
+   from vbak into TABLE @data(lt_data1) WHERE vbeln = @lv_vbeln.
+
+CL_DEMO_OUTPUT=>DISPLAY( lt_data1 ).
+
+
+Type 4
+
+DATA lv_vbelnval type vbak-vbeln VALUE '0000000002'.
+SELECT
+       VBELN AS Sales_Document,
+    CASE
+      WHEN VBELN = @lv_vbelnval THEN 'SECOND'
+      END AS VALUE,
+  ERDAT AS Created_On,
+  ERZET AS Time,
+  ERNAM AS Created_By
+   from vbak into  @data(lwa_data1) WHERE vbeln = @lv_vbeln.
+ENDSELECT.
+CL_DEMO_OUTPUT=>DISPLAY( lwa_data1 ).
+
+
+
+
+
+
+CONDITIONAL STATEMENT
+
+SELECT
+        VBELN AS Sales_Document,
+        ERDAT AS Created_On,
+        ERZET AS Time,
+        ERNAM AS Created_By
+   from vbak into  @data(lwa_data1) WHERE vbeln = @lv_vbeln.
+ENDSELECT.
+
+
+data(lv_text) = cond #( when lwa_data1-Created_By = 'BPINST' then 'Basant Joshi' ).
+
+CL_DEMO_OUTPUT=>DISPLAY( lv_text ).
+
+
+READ STATEMENT WILL NOT BE USED
+
+
+
+
+
+SELECT  VBELN AS Sales_Document,
+        ERDAT AS Created_On,
+        ERZET AS Time,
+        ERNAM AS Created_By
+        from vbak into TABLE  @data(lt_data1)
+        UP TO 10 ROWS.
+
+
+
+*DATA(lwa_vbap1) = lt_data1[ sales_document = '0000000002' ].
+IF LINE_EXISTS( lt_data1[ sales_document = '0000000002' ] ).
+  WRITE : / 'iT eXISTS'.
+ELSE .
+*  DATA(lv_indx) = lt_data1[ 2 ].
+*  CL_DEMO_OUTPUT=>DISPLAY( lv_indx ).
+  write: / 'It does not exists'.
+ENDIF.
+
+
+Value assignment.
+
+
+TYPES : BEGIN OF st,
+        name TYPE CHAR20,
+        AGE TYPE NUM,
+
+        END OF st.
+
+TYPES : lt_tabt TYPE TABLE of st WITH EMPTY KEY.
+
+
+data(it_new) = value lt_tabt( ( name = 'Basant joshi'  AGE = 30 ) ).
+
+CL_DEMO_OUTPUT=>DISPLAY( IT_NEW ).
